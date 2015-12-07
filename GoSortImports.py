@@ -15,12 +15,14 @@ class GoSortImports(sublime_plugin.TextCommand):
         if not input:
             return
         settings = view.settings()
+        env_settings = settings.get('env')
         env = os.environ.copy()
-        if settings.has('GOPATH'):
-            env['GOPATH'] = os.path.expandvars(settings.get('GOPATH'))
-        if settings.has('PATH'):
-            env['PATH'] = os.path.expandvars(settings.get('PATH'))
-        # print(env['PATH'])
+        if 'GOPATH' in env_settings:
+            env['GOPATH'] = os.path.expandvars(env_settings['GOPATH'])
+        if 'PATH' in env_settings:
+            env['PATH'] = os.path.expandvars(env_settings['PATH'])
+        if 'GOPATH' not in env:
+            print('calling sortimports without GOPATH')
         popen = subprocess.Popen(
             [settings.get("sortimports", "sortimports"), "-c", filename],
             stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.PIPE, env=env)
